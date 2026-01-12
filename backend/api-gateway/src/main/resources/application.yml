@@ -6,27 +6,39 @@ spring:
     name: api-gateway
   cloud:
     gateway:
-      routes:
-        # Rotta per Auth Service
-        - id: auth-route
-          uri: http://localhost:8081
-          predicates:
-            - Path=/auth/**
-        
-        # Rotta per Ticket Service
-        - id: ticket-route
-          uri: http://localhost:8082
-          predicates:
-            - Path=/tickets/**
+      server:
+        webflux:
+          # --- CONFIGURAZIONE CORS ---
+          globalcors:
+            cors-configurations:
+              '[/**]':
+                allowedOrigins: "*"
+                allowedMethods:
+                  - GET
+                  - POST
+                  - PUT
+                  - DELETE
+                  - OPTIONS
+                allowedHeaders: "*"
 
-        # Rotta per Analytics Service
-        - id: analytics-route
-          uri: http://localhost:8083
-          predicates:
-            - Path=/analytics/**
+          # --- CONFIGURAZIONE ROUTING ---
+          routes:
+            - id: auth-route
+              uri: http://localhost:8081
+              predicates:
+                - Path=/auth/**
 
-        # Rotta per Notification Service
-        - id: notification-route
-          uri: http://localhost:8084
-          predicates:
-            - Path=/notifications/**
+            - id: ticket-route
+              uri: http://localhost:8082
+              predicates:
+                - Path=/tickets/**
+
+            - id: analytics-route
+              uri: http://localhost:8083
+              predicates:
+                - Path=/analytics/**
+
+            - id: notification-route
+              uri: http://localhost:8084
+              predicates:
+                - Path=/notifications/**
