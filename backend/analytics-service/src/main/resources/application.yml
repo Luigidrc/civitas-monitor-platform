@@ -1,0 +1,14 @@
+server:
+  port: 8083
+
+spring:
+  application:
+    name: analytics-service
+  data:
+    mongodb:
+      uri: mongodb://admin:password123@localhost:27017/civitas_db?authSource=admin
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest

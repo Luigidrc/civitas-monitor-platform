@@ -1,0 +1,17 @@
+server:
+  port: 8084
+
+spring:
+  application:
+    name: notification-service
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+  # Configurazione FINTA per email (così non esplode all'avvio)
+  mail:
+    host: localhost
+    port: 1025
+    username: null
+    password: null
