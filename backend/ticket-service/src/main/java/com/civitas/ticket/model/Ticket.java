@@ -6,6 +6,8 @@ import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.data.mongodb.core.index.GeoSpatialIndexType;
 import org.springframework.data.mongodb.core.index.GeoSpatialIndexed;
 import org.springframework.data.mongodb.core.mapping.Document;
+import java.util.List;
+import java.util.ArrayList;
 
 @Data
 @Document(collection = "tickets")
@@ -14,7 +16,9 @@ public class Ticket {
     private String id;
     private String title;
     private String description;
-    private String status; // e.g., "OPEN", "IN_PROGRESS", "CLOSED"
+    private List<String> imageNames = new ArrayList<>();
+    private String category;
+    private String status;
 
     // Questo è il cuore della geo-query
     @GeoSpatialIndexed(type = GeoSpatialIndexType.GEO_2DSPHERE)

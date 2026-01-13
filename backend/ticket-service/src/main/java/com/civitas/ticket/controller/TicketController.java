@@ -2,6 +2,7 @@ package com.civitas.ticket.controller;
 
 import com.civitas.ticket.model.Ticket;
 import com.civitas.ticket.repository.TicketRepository;
+import com.civitas.ticket.service.FileStorageService;
 import com.civitas.ticket.service.GeofencingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.geo.Distance;
@@ -9,6 +10,7 @@ import org.springframework.data.geo.Metrics;
 import org.springframework.data.geo.Point;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -18,16 +20,28 @@ import java.util.List;
 @CrossOrigin(origins = "http://localhost:5173")
 public class TicketController {
 
-    // Devi dichiarare ENTRAMBI come private final per l'iniezione automatica
     private final TicketRepository ticketRepository;
     private final GeofencingService geofencingService;
+    private final FileStorageService fileStorageService;
 
-    @PostMapping
-    public ResponseEntity<?> createTicket(@RequestBody Ticket ticket) {
-        // Ora geofencingService è riconosciuto!
+    @PostMapping(consumes = { "multipart/form-data" })
+    public ResponseEntity<?> createTicket(
+            @RequestPart("ticket") Ticket ticket,
+            @RequestPart(value = "files", required = false) MultipartFile[] files) {
+
+        // Controllo Geofencing (invariato)
         if (!geofencingService.isWithinCityLimits(ticket.getLocation())) {
-            return ResponseEntity.badRequest()
-                    .body("Errore: La posizione indicata è fuori dai confini comunali.");
+            return ResponseEntity.badRequest().body("Fuori dai confini.");
+        }
+
+        // Gestione Media Module (Multi-upload)
+        if (files != null && files.length > 0) {
+            for (MultipartFile file : files) {
+                if (!file.isEmpty()) {
+                    String filename = fileStorageService.save(file);
+                    ticket.getImageNames().add(filename);
+                }
+            }
         }
 
         ticket.setStatus("OPEN");

@@ -4,7 +4,6 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import TicketForm from './TicketForm';
 
-// --- FIX ICONE DEFAULT LEAFLET ---
 import icon from 'leaflet/dist/images/marker-icon.png';
 import iconShadow from 'leaflet/dist/images/marker-shadow.png';
 
@@ -16,21 +15,17 @@ let DefaultIcon = L.icon({
     popupAnchor: [1, -34]
 });
 L.Marker.prototype.options.icon = DefaultIcon;
-// ---------------------------------
 
 const TicketMap = () => {
     const [tickets, setTickets] = useState([]);
     const [center] = useState([45.4642, 9.1900]); // Milano
     const [newTicketPos, setNewTicketPos] = useState(null);
 
-    // Definiamo i confini del Geofencing (gli stessi del backend Java)
-    // Formato: [[lat_min, lng_min], [lat_max, lng_max]]
     const boundary = [
         [45.0, 9.0],
         [46.0, 10.0]
     ];
 
-    // Componente interno per gestire i click
     const MapEvents = () => {
         useMapEvents({
             click(e) {
@@ -40,7 +35,6 @@ const TicketMap = () => {
         return null;
     };
 
-    // Funzione per caricare i ticket dal backend (Porta 8082 + IP 127.0.0.1)
     const loadTickets = async () => {
         try {
             const response = await fetch('http://127.0.0.1:8082/api/tickets');
@@ -62,7 +56,7 @@ const TicketMap = () => {
 
             <MapContainer
                 center={center}
-                zoom={9} // Zoom leggermente più lontano per vedere il rettangolo
+                zoom={9}
                 style={{ height: '100%', width: '100%' }}
             >
                 <TileLayer
@@ -70,7 +64,6 @@ const TicketMap = () => {
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
 
-                {/* VISUALIZZAZIONE GEOFENCING: Rettangolo blu semitrasparente */}
                 <Rectangle
                     bounds={boundary}
                     pathOptions={{ color: 'blue', weight: 2, fillOpacity: 0.1 }}
@@ -78,39 +71,68 @@ const TicketMap = () => {
 
                 <MapEvents />
 
-                {/* Ticket esistenti */}
                 {tickets.map((ticket) => (
                     <Marker
                         key={ticket.id}
                         position={[ticket.location.coordinates[1], ticket.location.coordinates[0]]}
                     >
                         <Popup>
-                            <div style={{ minWidth: '150px' }}>
-                                <h3 style={{ margin: '0 0 5px 0' }}>{ticket.title}</h3>
-                                <p style={{ margin: '0 0 10px 0', fontSize: '14px' }}>{ticket.description}</p>
-                                <span style={{
-                                    padding: '2px 6px',
-                                    borderRadius: '4px',
-                                    background: '#e0e0e0',
-                                    fontSize: '12px',
-                                    fontWeight: 'bold'
+                            <div style={{ minWidth: '200px', maxWidth: '250px' }}>
+                                <h3 style={{ margin: '0 0 4px 0', fontSize: '16px' }}>{ticket.title}</h3>
+
+                                {/* Visualizzazione della categoria nel popup */}
+                                <div style={{
+                                    fontSize: '11px',
+                                    fontWeight: 'bold',
+                                    color: '#2980b9',
+                                    textTransform: 'uppercase',
+                                    marginBottom: '8px'
                                 }}>
-                                    {ticket.status}
-                                </span>
+                                    📁 {ticket.category || 'Generale'}
+                                </div>
+
+                                {ticket.imageNames && ticket.imageNames.length > 0 && (
+                                    <div style={{ display: 'flex', gap: '5px', overflowX: 'auto', marginBottom: '10px', paddingBottom: '5px' }}>
+                                        {ticket.imageNames.map((name, index) => (
+                                            <img
+                                                key={index}
+                                                src={`http://127.0.0.1:8082/uploads/${name}`}
+                                                alt={`Dettaglio ${index}`}
+                                                style={{ width: '80px', height: '60px', objectFit: 'cover', borderRadius: '4px', flexShrink: 0 }}
+                                            />
+                                        ))}
+                                    </div>
+                                )}
+
+                                <p style={{ margin: '0 0 10px 0', fontSize: '13px', color: '#555' }}>
+                                    {ticket.description}
+                                </p>
+
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                    <span style={{
+                                        padding: '3px 8px',
+                                        borderRadius: '12px',
+                                        background: ticket.status === 'OPEN' ? '#ffeaa7' : '#fab1a0',
+                                        fontSize: '11px',
+                                        fontWeight: 'bold',
+                                        textTransform: 'uppercase'
+                                    }}>
+                                        {ticket.status}
+                                    </span>
+                                    <small style={{ color: '#999' }}>ID: {ticket.id.substring(0, 5)}...</small>
+                                </div>
                             </div>
                         </Popup>
                     </Marker>
                 ))}
 
-                {/* Marker temporaneo click */}
                 {newTicketPos && (
                     <Marker position={newTicketPos}>
-                        <Popup>Nuova segnalazione...</Popup>
+                        <Popup>Nuova segnalazione qui</Popup>
                     </Marker>
                 )}
             </MapContainer>
 
-            {/* Form overlay */}
             {newTicketPos && (
                 <TicketForm
                     latlng={newTicketPos}

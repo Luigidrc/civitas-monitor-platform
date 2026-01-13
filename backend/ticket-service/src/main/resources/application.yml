@@ -1,12 +1,23 @@
 server:
   port: 8082
 
+app:
+  upload:
+    dir: ./uploads 
+
 spring:
   application:
     name: ticket-service
+  
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 50MB
+  
   data:
     mongodb:
       uri: mongodb://admin:password123@localhost:27017/civitas_db?authSource=admin
+  
   rabbitmq:
     host: localhost
     port: 5672

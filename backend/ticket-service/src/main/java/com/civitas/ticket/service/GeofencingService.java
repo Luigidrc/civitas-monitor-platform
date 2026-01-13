@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class GeofencingService {
 
-    // Definiamo i limiti come costanti per precisione
     private static final double LNG_MIN = 9.0;
     private static final double LNG_MAX = 10.0;
     private static final double LAT_MIN = 45.0;
@@ -20,11 +19,11 @@ public class GeofencingService {
         double lng = point.getX(); // Longitudine
         double lat = point.getY(); // Latitudine
 
-        // Controlliamo se le coordinate cadono dentro il range
+        // Controlla se le coordinate cadono dentro il range
         boolean isInside = (lng >= LNG_MIN && lng <= LNG_MAX) &&
                 (lat >= LAT_MIN && lat <= LAT_MAX);
 
-        // Aggiungiamo un log per vedere cosa succede nel terminale
+        // Log per vedere cosa succede nel terminale
         System.out.println("Verifica Geofencing - Lng: " + lng + " Lat: " + lat + " -> Risultato: " + isInside);
 
         return isInside;
