@@ -19,15 +19,37 @@ spec:
           ports:
             - containerPort: 8080
           env:
-            # Diciamo al Gateway dove trovare gli altri servizi NEL CLUSTER
+            # Rotta 0: Auth Service
+            - name: SPRING_CLOUD_GATEWAY_ROUTES_0_ID
+              value: "auth-service"
             - name: SPRING_CLOUD_GATEWAY_ROUTES_0_URI
               value: "http://auth-service:8081"
+            - name: SPRING_CLOUD_GATEWAY_ROUTES_0_PREDICATES_0
+              value: "Path=/api/auth/**"
+
+            # Rotta 1: Ticket Service
+            - name: SPRING_CLOUD_GATEWAY_ROUTES_1_ID
+              value: "ticket-service"
             - name: SPRING_CLOUD_GATEWAY_ROUTES_1_URI
               value: "http://ticket-service:8082"
+            - name: SPRING_CLOUD_GATEWAY_ROUTES_1_PREDICATES_0
+              value: "Path=/api/tickets/**"
+
+            # Rotta 2: Analytics Service
+            - name: SPRING_CLOUD_GATEWAY_ROUTES_2_ID
+              value: "analytics-service"
             - name: SPRING_CLOUD_GATEWAY_ROUTES_2_URI
               value: "http://analytics-service:8083"
+            - name: SPRING_CLOUD_GATEWAY_ROUTES_2_PREDICATES_0
+              value: "Path=/api/analytics/**"
+
+            # Rotta 3: Notification Service
+            - name: SPRING_CLOUD_GATEWAY_ROUTES_3_ID
+              value: "notification-service"
             - name: SPRING_CLOUD_GATEWAY_ROUTES_3_URI
               value: "http://notification-service:8084"
+            - name: SPRING_CLOUD_GATEWAY_ROUTES_3_PREDICATES_0
+              value: "Path=/api/notifications/**"
 
 ---
 apiVersion: v1

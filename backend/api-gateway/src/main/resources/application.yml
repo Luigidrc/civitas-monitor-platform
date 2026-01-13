@@ -42,3 +42,12 @@ spring:
               uri: http://localhost:8084
               predicates:
                 - Path=/notifications/**
+
+management:
+  endpoint:
+    health:
+      show-details: always
+  endpoints:
+    web:
+      exposure:
+        include: health, info, gateway
