@@ -4,12 +4,31 @@ server:
 spring:
   application:
     name: notification-service
+
+  # 🔌 CONNESSIONE DATABASE (Mancava questo!)
+  datasource:
+    url: jdbc:postgresql://postgres-service:5432/civitas_auth_db
+    username: admin
+    password: password123
+    driver-class-name: org.postgresql.Driver
+
+  # Configurazione JPA (crea le tabelle in automatico)
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  # Configurazione RabbitMQ
   rabbitmq:
-    host: localhost
+    host: rabbitmq-service # ⚠️ Usa il nome del servizio K8s, non "localhost"
     port: 5672
     username: guest
     password: guest
-  # Configurazione FINTA per email (così non esplode all'avvio)
+
+  # Configurazione FINTA per email
   mail:
     host: localhost
     port: 1025
