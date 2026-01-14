@@ -1,0 +1,63 @@
+.notification-panel {
+    max-width: 600px;
+    margin: 20px auto;
+    background: #2a2a2a;
+    border: 1px solid #444;
+    border-radius: 8px;
+    padding: 15px;
+}
+
+.notification-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #444;
+    padding-bottom: 10px;
+}
+
+.badge {
+    background-color: red;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 50%;
+    font-size: 0.8em;
+    vertical-align: top;
+}
+
+.mark-read-btn {
+    background: transparent;
+    border: 1px solid #666;
+    color: #aaa;
+    font-size: 0.8rem;
+    padding: 4px 8px;
+    cursor: pointer;
+}
+
+.notif-card {
+    padding: 10px;
+    margin-bottom: 8px;
+    border-radius: 4px;
+    text-align: left;
+}
+
+.notif-card.unread {
+    background-color: #3a3a50; /* Leggermente bluastro per le non lette */
+    border-left: 4px solid #646cff;
+}
+
+.notif-card.read {
+    background-color: #333;
+    opacity: 0.7;
+}
+
+.notif-title {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 4px;
+    color: #fff;
+}
+
+.notif-title small {
+    color: #888;
+}
