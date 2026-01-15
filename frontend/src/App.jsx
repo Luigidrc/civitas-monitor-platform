@@ -1,6 +1,7 @@
 import './App.css'
 import MyTickets from './components/MyTickets'
 import NotificationCenter from './components/NotificationCenter';
+import Settings from "./components/Settings.jsx";
 
 function App() {
     return (
@@ -9,10 +10,9 @@ function App() {
                 <h1>Civitas Monitor 🏙️</h1>
             </nav>
 
-            {/* 2. Aggiungi il componente QUI, prima dei ticket */}
-            <NotificationCenter />
+            <Settings />
 
-            <div style={{ margin: '40px 0' }}></div> {/* Un po' di spazio */}
+            <NotificationCenter />
 
             <MyTickets />
         </>

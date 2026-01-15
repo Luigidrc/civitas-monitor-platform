@@ -7,8 +7,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class RabbitMQConfig {
 
-    // Definiamo il nome della coda: "notification.queue"
-    public static final String QUEUE_NAME = "notification.queue";
+    public static final String QUEUE_NAME = "ticket.created.queue";
 
     @Bean
     public Queue notificationQueue() {
