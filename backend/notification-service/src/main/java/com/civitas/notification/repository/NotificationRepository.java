@@ -11,4 +11,6 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
 
     // Metodo per contare quelle non lette
     long countByRecipientAndIsReadFalse(String recipient);
+
+    List<Notification> findByRecipientAndIsReadFalse(String recipient);
 }

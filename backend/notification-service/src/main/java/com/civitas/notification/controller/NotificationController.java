@@ -34,9 +34,17 @@ public class NotificationController {
         });
     }
 
-    // 3. Endpoint di TEST per creare una notifica manualmente (utile per noi ora!)
+    // 3.post di TEST per creare una notifica manualmente (utile per noi ora!)
     @PostMapping("/test")
     public Notification createTestNotification(@RequestParam String user, @RequestParam String msg) {
         return repository.save(new Notification(user, "Test Notifica", msg));
+    }
+
+    // 4. NUOVO ENDPOINT: Segna TUTTO come letto per un utente
+    @PatchMapping("/read-all")
+    public void markAllAsRead(@RequestParam String user) {
+        List<Notification> unread = repository.findByRecipientAndIsReadFalse(user);
+        unread.forEach(n -> n.setRead(true));
+        repository.saveAll(unread);
     }
 }
