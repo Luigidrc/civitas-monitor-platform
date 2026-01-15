@@ -1,10 +1,10 @@
 import { useState } from 'react';
 
-const TicketForm = ({ latlng, address, onSuccess, onCancel }) => {
+const TicketForm = ({ latlng, address, municipalityId, onSuccess, onCancel }) => {
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [category, setCategory] = useState('STRADE');
-    const [files, setFiles] = useState([]); // Array per le foto
+    const [files, setFiles] = useState([]);
 
     const handleFileChange = (e) => {
         setFiles(Array.from(e.target.files));
@@ -19,26 +19,18 @@ const TicketForm = ({ latlng, address, onSuccess, onCancel }) => {
             description,
             category,
             address,
+            municipalityId: municipalityId.toLowerCase().trim(),
             location: {
                 type: "Point",
                 coordinates: [latlng.lng, latlng.lat]
             }
         };
 
-        formData.append('ticket', new Blob([JSON.stringify(ticketData)], {
-            type: 'application/json'
-        }));
-
-        files.forEach(file => {
-            formData.append('files', file);
-        });
+        formData.append('ticket', new Blob([JSON.stringify(ticketData)], { type: 'application/json' }));
+        files.forEach(file => { formData.append('files', file); });
 
         try {
-            const response = await fetch('http://127.0.0.1:8082/api/tickets', {
-                method: 'POST',
-                body: formData
-            });
-
+            const response = await fetch('http://127.0.0.1:8082/api/tickets', { method: 'POST', body: formData });
             if (response.ok) {
                 alert("Segnalazione inviata con successo!");
                 onSuccess();
@@ -53,13 +45,21 @@ const TicketForm = ({ latlng, address, onSuccess, onCancel }) => {
 
     return (
         <div style={formContainerStyle}>
-            <h3 style={{ marginTop: 0, color: '#2c3e50', marginBottom: '5px' }}>Nuova Segnalazione</h3>
+            <h3 style={{ marginTop: 0, color: '#2c3e50', marginBottom: '10px' }}>Nuova Segnalazione</h3>
+
+            <div style={{ marginBottom: '15px' }}>
+                <div style={{ fontSize: '10px', fontWeight: 'bold', color: '#7f8c8d', marginBottom: '4px' }}>COMUNE RILEVATO</div>
+                <span style={{
+                    backgroundColor: municipalityId === 'milano' ? '#27ae60' : '#2980b9',
+                    color: 'white', padding: '4px 10px', borderRadius: '20px', fontSize: '12px', fontWeight: 'bold', textTransform: 'uppercase'
+                }}>
+                    🏛️ {municipalityId}
+                </span>
+            </div>
 
             <div style={addressBoxStyle}>
                 <span style={{ fontSize: '10px', fontWeight: 'bold', color: '#7f8c8d' }}>📍 POSIZIONE RILEVATA</span>
-                <p style={{ fontSize: '12px', margin: '2px 0', color: '#34495e', lineHeight: '1.2' }}>
-                    {address || "Recupero posizione..."}
-                </p>
+                <p style={{ fontSize: '12px', margin: '4px 0', color: '#34495e', lineHeight: '1.2' }}>{address}</p>
             </div>
 
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
@@ -74,41 +74,20 @@ const TicketForm = ({ latlng, address, onSuccess, onCancel }) => {
                     </select>
                 </div>
 
-                <input
-                    type="text" placeholder="Titolo (es. Buca in strada)"
-                    style={inputStyle}
-                    value={title} onChange={(e) => setTitle(e.target.value)} required
-                />
-
-                <textarea
-                    placeholder="Descrizione dettagliata..."
-                    style={{ ...inputStyle, minHeight: '60px' }}
-                    value={description} onChange={(e) => setDescription(e.target.value)} required
-                />
+                <input type="text" placeholder="Titolo" style={inputStyle} value={title} onChange={(e) => setTitle(e.target.value)} required />
+                <textarea placeholder="Descrizione..." style={{ ...inputStyle, minHeight: '60px' }} value={description} onChange={(e) => setDescription(e.target.value)} required />
 
                 <div style={{ margin: '5px 0' }}>
-                    <label style={{ display: 'block', fontSize: '12px', marginBottom: '5px', fontWeight: 'bold' }}>
-                        Foto (Seleziona uno o più file):
-                    </label>
-                    <input
-                        type="file"
-                        accept="image/*"
-                        multiple
-                        onChange={handleFileChange}
-                        style={{ fontSize: '12px', width: '100%' }}
-                    />
-
-                    {/* INDICATORE FILE SELEZIONATI - RIPRISTINATO */}
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold' }}>Foto:</label>
+                    <input type="file" accept="image/*" multiple onChange={handleFileChange} style={{ fontSize: '12px' }} />
                     {files.length > 0 && (
-                        <div style={{ marginTop: '8px', padding: '5px', backgroundColor: '#e8f5e9', borderRadius: '4px', border: '1px solid #c8e6c9' }}>
-                            <p style={{ fontSize: '11px', color: '#2e7d32', margin: 0, fontWeight: 'bold' }}>
-                                {files.length} {files.length === 1 ? 'foto selezionata' : 'foto selezionate'}
-                            </p>
-                        </div>
+                        <p style={{ fontSize: '11px', color: '#2e7d32', margin: '5px 0' }}>
+                            {files.length} {files.length === 1 ? 'foto selezionata' : 'foto selezionate'}
+                        </p>
                     )}
                 </div>
 
-                <div style={{ display: 'flex', gap: '10px', marginTop: '5px' }}>
+                <div style={{ display: 'flex', gap: '10px' }}>
                     <button type="submit" style={submitBtnStyle}>Invia</button>
                     <button type="button" onClick={onCancel} style={cancelBtnStyle}>Annulla</button>
                 </div>
@@ -117,7 +96,6 @@ const TicketForm = ({ latlng, address, onSuccess, onCancel }) => {
     );
 };
 
-// Stili (invariati)
 const addressBoxStyle = { backgroundColor: '#f8f9fa', padding: '8px', borderRadius: '6px', border: '1px solid #e9ecef', marginBottom: '15px' };
 const labelStyle = { fontSize: '11px', fontWeight: 'bold', color: '#7f8c8d' };
 const formContainerStyle = { position: 'absolute', top: '20px', right: '20px', zIndex: 1000, backgroundColor: 'white', padding: '20px', borderRadius: '12px', boxShadow: '0 8px 30px rgba(0,0,0,0.2)', width: '320px' };

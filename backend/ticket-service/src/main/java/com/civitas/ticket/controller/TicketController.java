@@ -29,7 +29,7 @@ public class TicketController {
             @RequestPart("ticket") Ticket ticket,
             @RequestPart(value = "files", required = false) MultipartFile[] files) {
 
-        // Controllo Geofencing (invariato)
+        // Controllo Geofencing
         if (!geofencingService.isWithinCityLimits(ticket.getLocation())) {
             return ResponseEntity.badRequest().body("Fuori dai confini.");
         }
@@ -61,7 +61,10 @@ public class TicketController {
     }
 
     @GetMapping
-    public List<Ticket> getAllTickets() {
+    public List<Ticket> getAllTickets(@RequestParam(required = false) String municipalityId) {
+        if (municipalityId != null && !municipalityId.isEmpty()) {
+            return ticketRepository.findByMunicipalityIdIgnoreCase(municipalityId);
+        }
         return ticketRepository.findAll();
     }
 }

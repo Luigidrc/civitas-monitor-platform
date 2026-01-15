@@ -19,6 +19,7 @@ public class Ticket {
     private List<String> imageNames = new ArrayList<>();
     private String category;
     private String address;
+    private String municipalityId;
     private String status;
 
     // Questo è il cuore della geo-query
