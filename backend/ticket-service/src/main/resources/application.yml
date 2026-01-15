@@ -6,9 +6,16 @@ spring:
     name: ticket-service
   data:
     mongodb:
-      uri: mongodb://admin:password123@localhost:27017/civitas_db?authSource=admin
+      # L'URI deve puntare al database 'civitas_db' usando le credenziali del docker-compose 
+      uri: mongodb://admin:password123@localhost:27018/civitas_db?authSource=admin
   rabbitmq:
+    # Parametri per la comunicazione asincrona gestita da Luigi 
     host: localhost
     port: 5672
     username: guest
     password: guest
+
+# Configurazione aggiuntiva utile per il tuo ruolo (Vittorio)
+logging:
+  level:
+    com.civitas.ticket: DEBUG # Ti permette di vedere le query e i cambi di stato nei log
